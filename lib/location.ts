@@ -4,7 +4,7 @@ interface LocationData {
   city?: string;
 }
 
-const LOCATION_CACHE_KEY = 'user_location';
+const LOCATION_CACHE_KEY = 'user_location_v2';
 const LOCATION_CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
 interface CachedLocation {
@@ -104,7 +104,7 @@ async function reverseGeocode(
     `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`,
     {
       headers: {
-        'User-Agent': 'Megaplan Radio App',
+        'User-Agent': 'Hz Radio App',
       },
     }
   );
@@ -128,22 +128,29 @@ async function reverseGeocode(
 }
 
 async function getIPLocation(): Promise<LocationData> {
-  // Using ipapi.co (free tier, no API key required for basic usage)
-  const response = await fetch('https://ipapi.co/json/');
+  // Using ipwho.is (free, no API key required)
+  const response = await fetch('https://ipwho.is/');
   
   if (!response.ok) {
-    // Fallback to default US location if IP detection fails
+    // Fallback to Philippines if IP detection fails
     return {
-      countryCode: 'US',
-      countryName: 'United States',
+      countryCode: 'PH',
+      countryName: 'Philippines',
     };
   }
 
   const data = await response.json();
   
+  if (!data.success) {
+    return {
+      countryCode: 'PH',
+      countryName: 'Philippines',
+    };
+  }
+
   return {
-    countryCode: data.country_code || 'US',
-    countryName: data.country_name || 'United States',
+    countryCode: data.country_code || 'PH',
+    countryName: data.country || 'Philippines',
     city: data.city,
   };
 }

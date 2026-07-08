@@ -31,7 +31,7 @@ export async function fetchStationsByCountry(
 
   try {
     const response = await fetch(
-      `${API_BASE_URL}/stations/bycountrycode/${countryCode}?limit=${limit}&order=clickcount&reverse=true`,
+      `${API_BASE_URL}/stations/search?countrycode=${countryCode}&limit=${limit}&order=clickcount&reverse=true`,
       {
         next: { revalidate: CACHE_DURATION / 1000 }
       }
