@@ -9,7 +9,7 @@ interface VolumeControlProps {
 
 export default function VolumeControl({ volume, onVolumeChange }: VolumeControlProps) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-3 p-3 bg-card rounded-xl border border-border shadow-xs">
       {volume === 0 ? (
         <VolumeX size={20} className="text-muted" />
       ) : (
@@ -22,7 +22,7 @@ export default function VolumeControl({ volume, onVolumeChange }: VolumeControlP
         step="0.01"
         value={volume}
         onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
-        className="w-24 h-2 bg-card rounded-lg appearance-none cursor-pointer accent-primary"
+        className="w-24 h-2 bg-card-hover rounded-lg appearance-none cursor-pointer accent-primary"
         aria-label="Volume"
       />
       <span className="text-sm text-muted w-10 text-right">

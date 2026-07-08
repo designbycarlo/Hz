@@ -13,8 +13,8 @@ export default function StationList({ stations, onStationSelect }: StationListPr
   const { currentStation, toggleFavorite, isFavorite } = useRadioStore();
 
   return (
-    <div className="w-full max-w-md max-h-96 overflow-y-auto">
-      <h3 className="text-lg font-semibold mb-4 text-foreground">Stations</h3>
+    <div className="w-full max-h-[60vh] overflow-y-auto scrollbar-hide">
+      <h3 className="text-lg font-semibold tracking-tight mb-4 text-foreground">Stations</h3>
       <div className="space-y-2">
         {stations.map((station) => {
           const isSelected = currentStation?.stationuuid === station.stationuuid;
@@ -23,19 +23,19 @@ export default function StationList({ stations, onStationSelect }: StationListPr
           return (
             <div
               key={station.stationuuid}
-              className={`p-3 rounded-lg cursor-pointer transition-all duration-200 ${
+              className={`p-4 rounded-xl cursor-pointer border transition-all duration-300 ${
                 isSelected 
-                  ? 'bg-primary text-white' 
-                  : 'bg-card hover:bg-card-hover'
+                  ? 'bg-primary text-white border-primary shadow-sm' 
+                  : 'bg-card border-border hover:bg-card-hover hover:border-border-strong hover:shadow-xs'
               }`}
               onClick={() => onStationSelect(station)}
             >
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
-                  <p className={`font-medium truncate ${isSelected ? 'text-white' : 'text-foreground'}`}>
+                  <p className={`font-medium truncate ${isSelected ? 'text-white dark:text-zinc-950' : 'text-foreground'}`}>
                     {station.name}
                   </p>
-                  <p className={`text-sm truncate ${isSelected ? 'text-gray-200' : 'text-muted'}`}>
+                  <p className={`text-sm truncate ${isSelected ? 'text-zinc-300 dark:text-zinc-600' : 'text-muted'}`}>
                     {station.country} • {station.tags}
                   </p>
                 </div>
@@ -48,7 +48,7 @@ export default function StationList({ stations, onStationSelect }: StationListPr
                     isFav 
                       ? 'text-red-500 hover:text-red-600' 
                       : isSelected 
-                        ? 'text-gray-200 hover:text-white' 
+                        ? 'text-zinc-300 hover:text-zinc-950 dark:text-zinc-700 dark:hover:text-zinc-950' 
                         : 'text-muted hover:text-foreground'
                   }`}
                 >

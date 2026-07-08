@@ -13,16 +13,16 @@ export default function Favorites({ onStationSelect }: FavoritesProps) {
 
   if (favorites.length === 0) {
     return (
-      <div className="w-full max-w-md p-4 bg-card rounded-lg border border-border">
-        <h3 className="text-lg font-semibold mb-2 text-foreground">Favorites</h3>
+      <div className="w-full max-w-md p-6 bg-card rounded-2xl border border-border shadow-xs">
+        <h3 className="text-lg font-semibold tracking-tight mb-2 text-foreground">Favorites</h3>
         <p className="text-sm text-muted">No favorites yet</p>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-md max-h-64 overflow-y-auto">
-      <h3 className="text-lg font-semibold mb-4 text-foreground">Favorites</h3>
+    <div className="w-full max-h-[45vh] overflow-y-auto scrollbar-hide">
+      <h3 className="text-lg font-semibold tracking-tight mb-4 text-foreground">Favorites</h3>
       <div className="space-y-2">
         {favorites.map((station) => {
           const isSelected = currentStation?.stationuuid === station.stationuuid;
@@ -30,10 +30,10 @@ export default function Favorites({ onStationSelect }: FavoritesProps) {
           return (
             <div
               key={station.stationuuid}
-              className={`p-3 rounded-lg cursor-pointer transition-all duration-200 ${
+              className={`p-4 rounded-xl cursor-pointer border transition-all duration-300 ${
                 isSelected 
-                  ? 'bg-primary text-white' 
-                  : 'bg-card hover:bg-card-hover'
+                  ? 'bg-primary text-white border-primary shadow-sm' 
+                  : 'bg-card border-border hover:bg-card-hover hover:border-border-strong hover:shadow-xs'
               }`}
             >
               <div className="flex items-center justify-between">
@@ -41,10 +41,10 @@ export default function Favorites({ onStationSelect }: FavoritesProps) {
                   className="flex-1 min-w-0"
                   onClick={() => onStationSelect(station)}
                 >
-                  <p className={`font-medium truncate ${isSelected ? 'text-white' : 'text-foreground'}`}>
+                  <p className={`font-medium truncate ${isSelected ? 'text-white dark:text-zinc-950' : 'text-foreground'}`}>
                     {station.name}
                   </p>
-                  <p className={`text-sm truncate ${isSelected ? 'text-gray-200' : 'text-muted'}`}>
+                  <p className={`text-sm truncate ${isSelected ? 'text-zinc-300 dark:text-zinc-600' : 'text-muted'}`}>
                     {station.country}
                   </p>
                 </div>
@@ -52,7 +52,7 @@ export default function Favorites({ onStationSelect }: FavoritesProps) {
                   onClick={() => removeFavorite(station.stationuuid)}
                   className={`ml-2 p-1 rounded-full transition-colors ${
                     isSelected 
-                      ? 'text-gray-200 hover:text-white' 
+                      ? 'text-zinc-300 hover:text-zinc-950 dark:text-zinc-700 dark:hover:text-zinc-950' 
                       : 'text-muted hover:text-red-500'
                   }`}
                 >

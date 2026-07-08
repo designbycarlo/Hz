@@ -10,7 +10,32 @@ import NowPlaying from '@/components/NowPlaying';
 import VolumeControl from '@/components/VolumeControl';
 import PlaybackControls from '@/components/PlaybackControls';
 import Favorites from '@/components/Favorites';
-import { Radio } from 'lucide-react';
+import { Sun, Moon } from 'lucide-react';
+
+function ThemeToggle() {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains('dark'));
+  }, []);
+
+  const toggle = () => {
+    const next = !document.documentElement.classList.contains('dark');
+    document.documentElement.classList.toggle('dark', next);
+    localStorage.setItem('color-theme', next ? 'dark' : 'light');
+    setIsDark(next);
+  };
+
+  return (
+    <button
+      onClick={toggle}
+      aria-label="Toggle theme"
+      className="p-2 rounded-lg bg-card border border-border text-foreground hover:bg-card-hover transition-colors duration-300"
+    >
+      {isDark ? <Sun size={18} /> : <Moon size={18} />}
+    </button>
+  );
+}
 
 export default function Home() {
   const {
@@ -45,11 +70,18 @@ export default function Home() {
       const location = await detectLocation();
       setUserCountry(location.countryCode);
 
-      const response = await fetch(`/api/stations?country=${location.countryCode}&limit=50`);
+      let response = await fetch(`/api/stations?country=${location.countryCode}&limit=50`);
+      let stations;
+      
       if (!response.ok) {
-        throw new Error('Failed to fetch stations');
+        console.warn('Country-specific fetch failed, falling back to top stations');
+        response = await fetch(`/api/stations?limit=50`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch stations');
+        }
       }
-      const stations = await response.json();
+      
+      stations = await response.json();
       setAvailableStations(stations);
 
       if (stations.length > 0) {
@@ -82,6 +114,24 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handlePreviousStation = () => {
+    if (availableStations.length === 0) return;
+    const currentIndex = currentStation 
+      ? availableStations.findIndex(s => s.stationuuid === currentStation.stationuuid)
+      : -1;
+    const newIndex = currentIndex <= 0 ? availableStations.length - 1 : currentIndex - 1;
+    handleStationSelect(availableStations[newIndex]);
+  };
+
+  const handleNextStation = () => {
+    if (availableStations.length === 0) return;
+    const currentIndex = currentStation 
+      ? availableStations.findIndex(s => s.stationuuid === currentStation.stationuuid)
+      : -1;
+    const newIndex = currentIndex >= availableStations.length - 1 ? 0 : currentIndex + 1;
+    handleStationSelect(availableStations[newIndex]);
   };
 
   const handlePlay = async () => {
@@ -126,22 +176,35 @@ export default function Home() {
   const isDisabled = isLoading || playbackState === 'loading';
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
-        <header className="flex items-center justify-between mb-8">
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-background/80 border-b border-border">
+        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Radio size={32} className="text-primary" />
-            <h1 className="text-2xl font-bold text-foreground">Megaplan Radio</h1>
+            <svg viewBox="0 0 32 32" className="w-9 h-9 rounded-xl shrink-0" role="img" aria-label="Hz Radio">
+              <rect width="32" height="32" rx="9" className="fill-zinc-950 dark:fill-zinc-100" />
+              <text x="10.5" y="22" fontFamily="system-ui, sans-serif" fontSize="15" fontWeight="800" letterSpacing="-0.5" className="fill-white dark:fill-zinc-950">Hz</text>
+              <path d="M19 12c1.2 4 2.4 4 3.6 0M19 18c1.2 4 2.4 4 3.6 0" className="stroke-zinc-400 dark:stroke-zinc-600" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+            </svg>
+            <div>
+              <h1 className="text-xl font-semibold tracking-tight text-foreground">Hz Radio</h1>
+              <p className="text-xs text-muted">The unit of frequency</p>
+            </div>
           </div>
-          {userCountry && (
-            <p className="text-sm text-muted">
-              📍 {userCountry}
-            </p>
-          )}
-        </header>
+          <div className="flex items-center gap-3">
+            {userCountry && (
+              <span className="text-sm text-muted">
+                📍 {userCountry}
+              </span>
+            )}
+            <ThemeToggle />
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-4xl mx-auto px-6 py-8">
 
         {error && (
-          <div className="mb-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+          <div className="w-[433px] max-w-full mx-auto mb-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
             <p className="text-red-500 text-sm">{error}</p>
             <button
               onClick={clearError}
@@ -152,14 +215,8 @@ export default function Home() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="flex flex-col items-center gap-8">
           <div className="flex flex-col items-center gap-6">
-            <RadioDial
-              stations={availableStations}
-              currentStation={currentStation}
-              onStationSelect={handleStationSelect}
-            />
-
             <NowPlaying station={currentStation} isPlaying={isPlaying} />
 
             <PlaybackControls
@@ -167,6 +224,8 @@ export default function Home() {
               onPlay={handlePlay}
               onPause={handlePause}
               onStop={handleStop}
+              onPrevious={handlePreviousStation}
+              onNext={handleNextStation}
               disabled={isDisabled || !currentStation}
             />
 
@@ -176,24 +235,24 @@ export default function Home() {
             />
           </div>
 
-          <div className="flex flex-col gap-6">
-            <div className="flex gap-2">
+          <div className="flex flex-col items-center gap-6 w-full max-w-md">
+            <div className="flex w-full gap-2">
               <button
                 onClick={() => setShowFavorites(false)}
-                className={`px-4 py-2 rounded-lg transition-colors ${
+                className={`flex-1 px-4 py-2 rounded-lg transition-all duration-300 whitespace-nowrap ${
                   !showFavorites
-                    ? 'bg-primary text-white'
-                    : 'bg-card hover:bg-card-hover text-foreground'
+                    ? 'bg-primary text-white dark:text-zinc-950 shadow-sm'
+                    : 'bg-card hover:bg-card-hover text-foreground border border-border'
                 }`}
               >
                 Stations
               </button>
               <button
                 onClick={() => setShowFavorites(true)}
-                className={`px-4 py-2 rounded-lg transition-colors ${
+                className={`flex-1 px-4 py-2 rounded-lg transition-all duration-300 whitespace-nowrap ${
                   showFavorites
-                    ? 'bg-primary text-white'
-                    : 'bg-card hover:bg-card-hover text-foreground'
+                    ? 'bg-primary text-white dark:text-zinc-950 shadow-sm'
+                    : 'bg-card hover:bg-card-hover text-foreground border border-border'
                 }`}
               >
                 Favorites
@@ -219,7 +278,7 @@ export default function Home() {
             </div>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }

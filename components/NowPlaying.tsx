@@ -1,7 +1,6 @@
 'use client';
 
 import { RadioStation } from '@/types/radio';
-import { Play, Pause, Radio } from 'lucide-react';
 
 interface NowPlayingProps {
   station: RadioStation | null;
@@ -10,24 +9,9 @@ interface NowPlayingProps {
 
 export default function NowPlaying({ station, isPlaying }: NowPlayingProps) {
   return (
-    <div className="flex items-center gap-4 p-4 bg-card rounded-lg border border-border">
-      {station?.favicon ? (
-        <img
-          src={station.favicon}
-          alt={station.name}
-          className="w-16 h-16 rounded-lg object-cover"
-          onError={(e) => {
-            e.currentTarget.style.display = 'none';
-          }}
-        />
-      ) : (
-        <div className="w-16 h-16 rounded-lg bg-card-hover flex items-center justify-center">
-          <Radio size={32} className="text-muted" />
-        </div>
-      )}
-      
+    <div className="flex items-center gap-4 p-6 bg-card rounded-2xl border border-border shadow-xs hover:shadow-md transition-all duration-300">
       <div className="flex-1 min-w-0">
-        <h2 className="text-lg font-semibold text-foreground truncate">
+        <h2 className="text-lg font-semibold tracking-tight text-foreground truncate">
           {station?.name || 'No station selected'}
         </h2>
         <p className="text-sm text-muted truncate">
