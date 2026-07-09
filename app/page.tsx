@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, useSyncExternalStore } from 'react';
+import { useEffect, useState, useCallback, useSyncExternalStore, useRef } from 'react';
 import { useRadioStore } from '@/stores/radioStore';
 import { getAudioManager } from '@/lib/audio';
 import { detectLocation } from '@/lib/location';
@@ -62,6 +62,7 @@ export default function Home() {
   } = useRadioStore();
 
   const [showFavorites, setShowFavorites] = useState(false);
+  const scanRetryRef = useRef(0);
 
   const initializeApp = useCallback(async () => {
     try {
@@ -111,10 +112,32 @@ export default function Home() {
       const audioManager = getAudioManager();
       await audioManager.play(station, volume);
       setPlaybackState('playing');
+      scanRetryRef.current = 0;
     } catch (err) {
       console.error('Playback error:', err);
       setPlaybackState('error');
-      setError('Failed to play station. Please try another.');
+      scanRetryRef.current += 1;
+
+      if (scanRetryRef.current > availableStations.length) {
+        scanRetryRef.current = 0;
+        setError('Failed to play station.');
+        return;
+      }
+
+      setError('Failed to play station. Scanning...');
+
+      const currentIndex = station
+        ? availableStations.findIndex(s => s.stationuuid === station.stationuuid)
+        : -1;
+      const nextIndex = currentIndex >= availableStations.length - 1 ? 0 : currentIndex + 1;
+      const nextStation = availableStations[nextIndex];
+
+      if (nextStation) {
+        setTimeout(() => handleStationSelect(nextStation), 1000);
+      } else {
+        scanRetryRef.current = 0;
+        setError('Failed to play station.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -149,10 +172,32 @@ export default function Home() {
       const audioManager = getAudioManager();
       await audioManager.play(currentStation, volume);
       setPlaybackState('playing');
+      scanRetryRef.current = 0;
     } catch (err) {
       console.error('Play error:', err);
       setPlaybackState('error');
-      setError('Failed to play. Please try again.');
+      scanRetryRef.current += 1;
+
+      if (scanRetryRef.current > availableStations.length) {
+        scanRetryRef.current = 0;
+        setError('Failed to play station.');
+        return;
+      }
+
+      setError('Failed to play station. Scanning...');
+
+      const currentIndex = currentStation
+        ? availableStations.findIndex(s => s.stationuuid === currentStation.stationuuid)
+        : -1;
+      const nextIndex = currentIndex >= availableStations.length - 1 ? 0 : currentIndex + 1;
+      const nextStation = availableStations[nextIndex];
+
+      if (nextStation) {
+        setTimeout(() => handleStationSelect(nextStation), 1000);
+      } else {
+        scanRetryRef.current = 0;
+        setError('Failed to play station.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -181,7 +226,7 @@ export default function Home() {
 
   return (
     <div className="h-dvh flex flex-col bg-background overflow-hidden">
-      <header className="max-w-4xl mx-auto px-6 py-4 flex justify-end w-full">
+      <header className="max-w-4xl mx-auto px-6 py-3 flex justify-end w-full">
         <div className="flex items-center gap-3">
           {userCountry && (
             <span className="text-sm text-muted">
@@ -193,22 +238,16 @@ export default function Home() {
       </header>
 
       <main className="flex-1 min-h-0 w-full overflow-hidden">
-        <div className="max-w-4xl mx-auto w-full px-6 py-8 h-full flex flex-col">
+        <div className="max-w-4xl mx-auto w-full px-6 py-6 h-full flex flex-col">
 
           {error && (
-            <div role="alert" className="w-alert max-w-full mx-auto mb-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-              <p className="text-red-500 text-sm">{error}</p>
-              <button
-                onClick={clearError}
-                className="mt-2 text-sm text-red-500 hover:text-red-600 underline"
-              >
-                Dismiss
-              </button>
+            <div className="w-full max-w-4xl mx-auto px-6 py-3">
+              <div className="h-1 rounded-full bg-red-500" />
             </div>
           )}
 
-          <div className="flex flex-col items-center gap-8 flex-1 min-h-0">
-            <div className="flex flex-col items-center gap-6 w-full max-w-md">
+          <div className="flex flex-col items-center gap-6 flex-1 min-h-0">
+            <div className="flex flex-col items-center gap-5 w-full max-w-md">
               <NowPlaying station={currentStation} isPlaying={isPlaying} />
 
               <PlaybackControls
@@ -220,14 +259,16 @@ export default function Home() {
                 onNext={handleNextStation}
                 disabled={isDisabled || !currentStation}
               />
+            </div>
 
+            <div className="w-full">
               <VolumeControl
                 volume={volume}
                 onVolumeChange={handleVolumeChange}
               />
             </div>
 
-            <div className="flex flex-col items-center gap-6 w-full max-w-md flex-1 min-h-0">
+            <div className="flex flex-col items-center gap-5 w-full max-w-md flex-1 min-h-0">
               <div className="flex w-full gap-2">
                 <button
                   onClick={() => setShowFavorites(false)}
@@ -264,7 +305,7 @@ export default function Home() {
 
           {isLoading && (
             <div className="fixed inset-0 bg-background/80 flex items-center justify-center z-50">
-              <div className="flex flex-col items-center gap-4">
+              <div className="flex flex-col items-center gap-3">
                 <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
                 <p className="text-foreground">Loading...</p>
               </div>

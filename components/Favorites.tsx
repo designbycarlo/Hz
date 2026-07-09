@@ -13,8 +13,7 @@ export default function Favorites({ onStationSelect }: FavoritesProps) {
 
   if (favorites.length === 0) {
     return (
-      <div className="w-full max-w-md p-6 bg-card rounded-2xl border border-border shadow-xs">
-        <h3 className="text-lg font-semibold tracking-tight mb-2 text-foreground">Favorites</h3>
+      <div className="w-full max-w-md p-4 bg-card rounded-2xl border border-border shadow-xs">
         <p className="text-sm text-muted">No favorites yet</p>
       </div>
     );
@@ -22,7 +21,6 @@ export default function Favorites({ onStationSelect }: FavoritesProps) {
 
   return (
     <div className="w-full flex-1 min-h-0 overflow-y-auto scrollbar-hide">
-      <h3 className="text-lg font-semibold tracking-tight mb-4 text-foreground">Favorites</h3>
       <div className="space-y-2">
         {favorites.map((station) => {
           const isSelected = currentStation?.stationuuid === station.stationuuid;
