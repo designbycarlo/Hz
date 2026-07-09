@@ -1,9 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Hz Radio">
-  <rect width="32" height="32" rx="9" fill="#09090b"/>
-<<<<<<< HEAD
-  <text x="5" y="22" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="21" font-weight="800" letter-spacing="-0.5" fill="#ffffff">Hz</text>
-=======
+  <rect width="32" height="32" rx="5" fill="#09090b"/>
   <text x="10.5" y="22" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" font-weight="800" letter-spacing="-0.5" fill="#ffffff">Hz</text>
->>>>>>> 05f35d6936a4a575e1f61b13d510620b441d5752
   
 </svg>
