@@ -181,7 +181,7 @@ export default function Home() {
 
   return (
     <div className="h-dvh flex flex-col bg-background overflow-hidden">
-      <header className="max-w-4xl mx-auto px-6 py-4 flex justify-end w-full">
+      <header className="max-w-4xl mx-auto px-6 py-3 flex justify-end w-full">
         <div className="flex items-center gap-3">
           {userCountry && (
             <span className="text-sm text-muted">
@@ -193,10 +193,10 @@ export default function Home() {
       </header>
 
       <main className="flex-1 min-h-0 w-full overflow-hidden">
-        <div className="max-w-4xl mx-auto w-full px-6 py-8 h-full flex flex-col">
+        <div className="max-w-4xl mx-auto w-full px-6 py-6 h-full flex flex-col">
 
           {error && (
-            <div role="alert" className="w-alert max-w-full mx-auto mb-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+            <div role="alert" className="w-alert max-w-full mx-auto mb-3 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
               <p className="text-red-500 text-sm">{error}</p>
               <button
                 onClick={clearError}
@@ -207,8 +207,8 @@ export default function Home() {
             </div>
           )}
 
-          <div className="flex flex-col items-center gap-8 flex-1 min-h-0">
-            <div className="flex flex-col items-center gap-6 w-full max-w-md">
+          <div className="flex flex-col items-center gap-6 flex-1 min-h-0">
+            <div className="flex flex-col items-center gap-5 w-full max-w-md">
               <NowPlaying station={currentStation} isPlaying={isPlaying} />
 
               <PlaybackControls
@@ -227,7 +227,7 @@ export default function Home() {
               />
             </div>
 
-            <div className="flex flex-col items-center gap-6 w-full max-w-md flex-1 min-h-0">
+            <div className="flex flex-col items-center gap-5 w-full max-w-md flex-1 min-h-0">
               <div className="flex w-full gap-2">
                 <button
                   onClick={() => setShowFavorites(false)}
@@ -264,7 +264,7 @@ export default function Home() {
 
           {isLoading && (
             <div className="fixed inset-0 bg-background/80 flex items-center justify-center z-50">
-              <div className="flex flex-col items-center gap-4">
+              <div className="flex flex-col items-center gap-3">
                 <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
                 <p className="text-foreground">Loading...</p>
               </div>

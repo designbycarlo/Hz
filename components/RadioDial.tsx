@@ -35,7 +35,7 @@ export default function RadioDial({ stations, currentStation, onStationSelect }:
   }
 
   return (
-    <div className="flex items-center justify-center gap-4 w-full">
+    <div className="flex items-center justify-center gap-3 w-full">
       <button
         onClick={handlePrevious}
         disabled={stations.length === 0}
