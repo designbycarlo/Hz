@@ -1,4 +1,4 @@
-import { RadioStation } from '@/types/radio';
+import { RadioStation, RawStation } from '@/types/radio';
 
 const API_BASE_URL = 'https://de1.api.radio-browser.info/json';
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
@@ -43,7 +43,7 @@ export async function fetchStationsByCountry(
 
     const data = await response.json();
     
-    const stations: RadioStation[] = data.map((station: any) => ({
+    const stations: RadioStation[] = data.map((station: RawStation) => ({
       stationuuid: station.stationuuid,
       name: station.name,
       url: station.url_resolved || station.url,
@@ -99,7 +99,7 @@ export async function searchStations(
 
     const data = await response.json();
     
-    const stations: RadioStation[] = data.map((station: any) => ({
+    const stations: RadioStation[] = data.map((station: RawStation) => ({
       stationuuid: station.stationuuid,
       name: station.name,
       url: station.url_resolved || station.url,
@@ -143,7 +143,7 @@ export async function getTopStations(limit: number = 50): Promise<RadioStation[]
 
     const data = await response.json();
     
-    const stations: RadioStation[] = data.map((station: any) => ({
+    const stations: RadioStation[] = data.map((station: RawStation) => ({
       stationuuid: station.stationuuid,
       name: station.name,
       url: station.url_resolved || station.url,

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Hz Radio">
-  <rect width="32" height="32" rx="9" fill="#09090b"/>
+  <rect width="32" height="32" rx="5" fill="#09090b"/>
   <text x="10.5" y="22" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" font-weight="800" letter-spacing="-0.5" fill="#ffffff">Hz</text>
-  <path d="M19 12c1.2 4 2.4 4 3.6 0M19 18c1.2 4 2.4 4 3.6 0" stroke="#a1a1aa" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+  
 </svg>

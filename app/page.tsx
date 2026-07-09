@@ -1,10 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useSyncExternalStore } from 'react';
 import { useRadioStore } from '@/stores/radioStore';
 import { getAudioManager } from '@/lib/audio';
 import { detectLocation } from '@/lib/location';
-import RadioDial from '@/components/RadioDial';
 import StationList from '@/components/StationList';
 import NowPlaying from '@/components/NowPlaying';
 import VolumeControl from '@/components/VolumeControl';
@@ -13,17 +12,23 @@ import Favorites from '@/components/Favorites';
 import { Sun, Moon } from 'lucide-react';
 
 function ThemeToggle() {
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    setIsDark(document.documentElement.classList.contains('dark'));
-  }, []);
+  const isDark = useSyncExternalStore(
+    (callback) => {
+      const observer = new MutationObserver(callback);
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class'],
+      });
+      return () => observer.disconnect();
+    },
+    () => document.documentElement.classList.contains('dark'),
+    () => false
+  );
 
   const toggle = () => {
     const next = !document.documentElement.classList.contains('dark');
     document.documentElement.classList.toggle('dark', next);
     localStorage.setItem('color-theme', next ? 'dark' : 'light');
-    setIsDark(next);
   };
 
   return (
@@ -58,11 +63,7 @@ export default function Home() {
 
   const [showFavorites, setShowFavorites] = useState(false);
 
-  useEffect(() => {
-    initializeApp();
-  }, []);
-
-  const initializeApp = async () => {
+  const initializeApp = useCallback(async () => {
     try {
       setIsLoading(true);
       clearError();
@@ -71,8 +72,7 @@ export default function Home() {
       setUserCountry(location.countryCode);
 
       let response = await fetch(`/api/stations?country=${location.countryCode}&limit=50`);
-      let stations;
-      
+
       if (!response.ok) {
         console.warn('Country-specific fetch failed, falling back to top stations');
         response = await fetch(`/api/stations?limit=50`);
@@ -80,8 +80,8 @@ export default function Home() {
           throw new Error('Failed to fetch stations');
         }
       }
-      
-      stations = await response.json();
+
+      const stations = await response.json();
       setAvailableStations(stations);
 
       if (stations.length > 0) {
@@ -93,7 +93,11 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [setIsLoading, clearError, setUserCountry, setAvailableStations, setCurrentStation, setError]);
+
+  useEffect(() => {
+    initializeApp();
+  }, [initializeApp]);
 
   const handleStationSelect = async (station: typeof currentStation) => {
     if (!station) return;
@@ -176,7 +180,7 @@ export default function Home() {
   const isDisabled = isLoading || playbackState === 'loading';
 
   return (
-    <div className="h-[100dvh] flex flex-col bg-background overflow-hidden">
+    <div className="h-dvh flex flex-col bg-background overflow-hidden">
       <header className="max-w-4xl mx-auto px-6 py-4 flex justify-end w-full">
         <div className="flex items-center gap-3">
           {userCountry && (
