@@ -1,3 +1,18 @@
+export interface RawStation {
+  stationuuid: string;
+  name: string;
+  url: string;
+  url_resolved?: string;
+  country?: string;
+  countrycode?: string;
+  favicon?: string;
+  tags?: string;
+  bitrate?: number;
+  homepage?: string;
+  language?: string;
+  state?: string;
+}
+
 export interface RadioStation {
   stationuuid: string;
   name: string;

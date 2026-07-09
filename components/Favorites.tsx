@@ -2,7 +2,7 @@
 
 import { RadioStation } from '@/types/radio';
 import { useRadioStore } from '@/stores/radioStore';
-import { Heart, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 
 interface FavoritesProps {
   onStationSelect: (station: RadioStation) => void;
