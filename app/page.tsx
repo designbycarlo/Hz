@@ -177,27 +177,14 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-background/80 border-b border-border">
-        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <svg viewBox="0 0 32 32" className="w-9 h-9 rounded-xl shrink-0" role="img" aria-label="Hz Radio">
-              <rect width="32" height="32" rx="9" className="fill-zinc-950 dark:fill-zinc-100" />
-              <text x="10.5" y="22" fontFamily="system-ui, sans-serif" fontSize="15" fontWeight="800" letterSpacing="-0.5" className="fill-white dark:fill-zinc-950">Hz</text>
-              <path d="M19 12c1.2 4 2.4 4 3.6 0M19 18c1.2 4 2.4 4 3.6 0" className="stroke-zinc-400 dark:stroke-zinc-600" strokeWidth="1.6" strokeLinecap="round" fill="none" />
-            </svg>
-            <div>
-              <h1 className="text-xl font-semibold tracking-tight text-foreground">Hz Radio</h1>
-              <p className="text-xs text-muted">The unit of frequency</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            {userCountry && (
-              <span className="text-sm text-muted">
-                📍 {userCountry}
-              </span>
-            )}
-            <ThemeToggle />
-          </div>
+      <header className="max-w-4xl mx-auto px-6 py-4 flex justify-end">
+        <div className="flex items-center gap-3">
+          {userCountry && (
+            <span className="text-sm text-muted">
+              📍 {userCountry}
+            </span>
+          )}
+          <ThemeToggle />
         </div>
       </header>
 

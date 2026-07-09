@@ -1,0 +1,27 @@
+[
+  {
+    "version": 1.1,
+    "atDirectives": [
+      {
+        "name": "@theme",
+        "description": "Register theme variables for Tailwind CSS v4."
+      },
+      {
+        "name": "@custom-variant",
+        "description": "Define a custom variant for Tailwind CSS v4."
+      },
+      {
+        "name": "@source",
+        "description": "Tell Tailwind CSS v4 where to scan for class names."
+      },
+      {
+        "name": "@plugin",
+        "description": "Import a plugin for Tailwind CSS v4."
+      },
+      {
+        "name": "@config",
+        "description": "Set the configuration file path for Tailwind CSS v4."
+      }
+    ]
+  }
+]
