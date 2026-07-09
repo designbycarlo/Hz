@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Hz Radio — The unit of frequency",
+  title: "Hz Radio",
   description: "Hz Radio: a web radio app. Hz — the unit of frequency.",
   icons: {
     icon: "/icon.svg",
