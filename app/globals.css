@@ -23,13 +23,13 @@
 }
 
 .dark {
-  --background: #09090b;   /* zinc-950 */
+  --background: #000000;   /* rich black — OLED pixels off, saves battery */
   --foreground: #fafafa;   /* zinc-50 */
-  --card: #18181b;         /* zinc-900 */
-  --card-hover: #27272a;   /* zinc-800 */
-  --border: #27272a;       /* zinc-800 */
-  --border-strong: #3f3f46;/* zinc-700 */
-  --muted: #a1a1aa;        /* zinc-400 */
+  --card: #0a0a0a;         /* near-black surface for subtle elevation */
+  --card-hover: #18181b;    /* zinc-900 */
+  --border: #18181b;        /* zinc-900 — visible on pure black */
+  --border-strong: #27272a; /* zinc-800 */
+  --muted: #a1a1aa;         /* zinc-400 */
 
   --primary: #f4f4f5;        /* zinc-100 */
   --primary-hover: #d4d4d8;  /* zinc-300 */
@@ -48,6 +48,10 @@
   --color-primary-hover: var(--primary-hover);
   --color-accent: var(--accent);
   --font-sans: var(--font-sans);
+}
+
+@utility w-alert {
+  width: 433px;
 }
 
 @layer base {
