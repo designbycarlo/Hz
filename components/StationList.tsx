@@ -13,7 +13,7 @@ export default function StationList({ stations, onStationSelect }: StationListPr
   const { currentStation, toggleFavorite, isFavorite } = useRadioStore();
 
   return (
-    <div className="w-full max-h-[60vh] overflow-y-auto scrollbar-hide">
+    <div className="w-full flex-1 min-h-0 overflow-y-auto scrollbar-hide">
       <h3 className="text-lg font-semibold tracking-tight mb-4 text-foreground">Stations</h3>
       <div className="space-y-2">
         {stations.map((station) => {

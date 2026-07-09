@@ -176,8 +176,8 @@ export default function Home() {
   const isDisabled = isLoading || playbackState === 'loading';
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="max-w-4xl mx-auto px-6 py-4 flex justify-end">
+    <div className="h-[100dvh] flex flex-col bg-background overflow-hidden">
+      <header className="max-w-4xl mx-auto px-6 py-4 flex justify-end w-full">
         <div className="flex items-center gap-3">
           {userCountry && (
             <span className="text-sm text-muted">
@@ -188,83 +188,85 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 py-8">
+      <main className="flex-1 min-h-0 w-full overflow-hidden">
+        <div className="max-w-4xl mx-auto w-full px-6 py-8 h-full flex flex-col">
 
-        {error && (
-          <div className="w-[433px] max-w-full mx-auto mb-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-            <p className="text-red-500 text-sm">{error}</p>
-            <button
-              onClick={clearError}
-              className="mt-2 text-sm text-red-500 hover:text-red-600 underline"
-            >
-              Dismiss
-            </button>
-          </div>
-        )}
-
-        <div className="flex flex-col items-center gap-8">
-          <div className="flex flex-col items-center gap-6 w-full max-w-md">
-            <NowPlaying station={currentStation} isPlaying={isPlaying} />
-
-            <PlaybackControls
-              isPlaying={isPlaying}
-              onPlay={handlePlay}
-              onPause={handlePause}
-              onStop={handleStop}
-              onPrevious={handlePreviousStation}
-              onNext={handleNextStation}
-              disabled={isDisabled || !currentStation}
-            />
-
-            <VolumeControl
-              volume={volume}
-              onVolumeChange={handleVolumeChange}
-            />
-          </div>
-
-          <div className="flex flex-col items-center gap-6 w-full max-w-md">
-            <div className="flex w-full gap-2">
+          {error && (
+            <div role="alert" className="w-alert max-w-full mx-auto mb-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+              <p className="text-red-500 text-sm">{error}</p>
               <button
-                onClick={() => setShowFavorites(false)}
-                className={`flex-1 px-4 py-2 rounded-lg transition-all duration-300 whitespace-nowrap ${
-                  !showFavorites
-                    ? 'bg-primary text-white dark:text-zinc-950 shadow-sm'
-                    : 'bg-card hover:bg-card-hover text-foreground border border-border'
-                }`}
+                onClick={clearError}
+                className="mt-2 text-sm text-red-500 hover:text-red-600 underline"
               >
-                Stations
-              </button>
-              <button
-                onClick={() => setShowFavorites(true)}
-                className={`flex-1 px-4 py-2 rounded-lg transition-all duration-300 whitespace-nowrap ${
-                  showFavorites
-                    ? 'bg-primary text-white dark:text-zinc-950 shadow-sm'
-                    : 'bg-card hover:bg-card-hover text-foreground border border-border'
-                }`}
-              >
-                Favorites
+                Dismiss
               </button>
             </div>
+          )}
 
-            {showFavorites ? (
-              <Favorites onStationSelect={handleStationSelect} />
-            ) : (
-              <StationList
-                stations={availableStations}
-                onStationSelect={handleStationSelect}
+          <div className="flex flex-col items-center gap-8 flex-1 min-h-0">
+            <div className="flex flex-col items-center gap-6 w-full max-w-md">
+              <NowPlaying station={currentStation} isPlaying={isPlaying} />
+
+              <PlaybackControls
+                isPlaying={isPlaying}
+                onPlay={handlePlay}
+                onPause={handlePause}
+                onStop={handleStop}
+                onPrevious={handlePreviousStation}
+                onNext={handleNextStation}
+                disabled={isDisabled || !currentStation}
               />
-            )}
-          </div>
-        </div>
 
-        {isLoading && (
-          <div className="fixed inset-0 bg-background/80 flex items-center justify-center z-50">
-            <div className="flex flex-col items-center gap-4">
-              <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-              <p className="text-foreground">Loading...</p>
+              <VolumeControl
+                volume={volume}
+                onVolumeChange={handleVolumeChange}
+              />
+            </div>
+
+            <div className="flex flex-col items-center gap-6 w-full max-w-md flex-1 min-h-0">
+              <div className="flex w-full gap-2">
+                <button
+                  onClick={() => setShowFavorites(false)}
+                  className={`flex-1 px-4 py-2 rounded-lg transition-all duration-300 whitespace-nowrap ${
+                    !showFavorites
+                      ? 'bg-primary text-white dark:text-zinc-950 shadow-sm'
+                      : 'bg-card hover:bg-card-hover text-foreground border border-border'
+                  }`}
+                >
+                  Stations
+                </button>
+                <button
+                  onClick={() => setShowFavorites(true)}
+                  className={`flex-1 px-4 py-2 rounded-lg transition-all duration-300 whitespace-nowrap ${
+                    showFavorites
+                      ? 'bg-primary text-white dark:text-zinc-950 shadow-sm'
+                      : 'bg-card hover:bg-card-hover text-foreground border border-border'
+                  }`}
+                >
+                  Favorites
+                </button>
+              </div>
+
+              {showFavorites ? (
+                <Favorites onStationSelect={handleStationSelect} />
+              ) : (
+                <StationList
+                  stations={availableStations}
+                  onStationSelect={handleStationSelect}
+                />
+              )}
             </div>
           </div>
-        )}
+
+          {isLoading && (
+            <div className="fixed inset-0 bg-background/80 flex items-center justify-center z-50">
+              <div className="flex flex-col items-center gap-4">
+                <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                <p className="text-foreground">Loading...</p>
+              </div>
+            </div>
+          )}
+        </div>
       </main>
     </div>
   );
