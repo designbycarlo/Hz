@@ -14,7 +14,8 @@ export default function StationList({ stations, onStationSelect }: StationListPr
 
   return (
     <div className="w-full flex-1 min-h-0 overflow-y-auto scrollbar-hide">
-      <div className="space-y-2">
+      <h3 className="text-lg font-semibold tracking-tight mb-4 text-foreground">Stations</h3>
+        <div className="space-y-2">
         {stations.map((station) => {
           const isSelected = currentStation?.stationuuid === station.stationuuid;
           const isFav = isFavorite(station.stationuuid);

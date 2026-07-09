@@ -224,6 +224,16 @@ export default function Home() {
   const isPlaying = playbackState === 'playing';
   const isDisabled = isLoading || playbackState === 'loading';
 
+  const statusLine = error
+    ? { type: 'error' as const, message: error }
+    : isLoading || playbackState === 'loading'
+      ? { type: 'success' as const, message: 'Loading station…' }
+      : playbackState === 'playing'
+        ? { type: 'success' as const, message: 'Now playing' }
+        : playbackState === 'paused'
+          ? { type: 'success' as const, message: 'Paused' }
+          : null;
+
   return (
     <div className="h-dvh flex flex-col bg-background overflow-hidden">
       <header className="md:max-w-md mx-auto px-6 py-3 flex justify-end w-full">
@@ -240,9 +250,23 @@ export default function Home() {
       <main className="flex-1 min-h-0 w-full overflow-hidden">
         <div className="md:max-w-md mx-auto w-full px-6 py-6 h-full flex flex-col">
 
-          {error && (
-            <div className="w-full md:max-w-md mx-auto px-6 py-3">
-              <div className="h-1 rounded-full bg-red-500" />
+          {statusLine && (
+            <div
+              role={statusLine.type === 'error' ? 'alert' : 'status'}
+              className="w-full max-w-md mx-auto"
+            >
+              <div
+                className={`h-1 w-full rounded-full ${
+                  statusLine.type === 'error' ? 'bg-red-500' : 'bg-emerald-500'
+                }`}
+              />
+              <p
+                className={`mt-1 text-xs text-center ${
+                  statusLine.type === 'error' ? 'text-red-500' : 'text-emerald-500'
+                }`}
+              >
+                {statusLine.message}
+              </p>
             </div>
           )}
 
@@ -259,9 +283,7 @@ export default function Home() {
                 onNext={handleNextStation}
                 disabled={isDisabled || !currentStation}
               />
-            </div>
 
-            <div className="w-full">
               <VolumeControl
                 volume={volume}
                 onVolumeChange={handleVolumeChange}
