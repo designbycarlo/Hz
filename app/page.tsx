@@ -226,7 +226,7 @@ export default function Home() {
 
   return (
     <div className="h-dvh flex flex-col bg-background overflow-hidden">
-      <header className="max-w-4xl mx-auto px-6 py-3 flex justify-end w-full">
+      <header className="md:max-w-md mx-auto px-6 py-3 flex justify-end w-full">
         <div className="flex items-center gap-3">
           {userCountry && (
             <span className="text-sm text-muted">
@@ -238,16 +238,16 @@ export default function Home() {
       </header>
 
       <main className="flex-1 min-h-0 w-full overflow-hidden">
-        <div className="max-w-4xl mx-auto w-full px-6 py-6 h-full flex flex-col">
+        <div className="md:max-w-md mx-auto w-full px-6 py-6 h-full flex flex-col">
 
           {error && (
-            <div className="w-full max-w-4xl mx-auto px-6 py-3">
+            <div className="w-full md:max-w-md mx-auto px-6 py-3">
               <div className="h-1 rounded-full bg-red-500" />
             </div>
           )}
 
           <div className="flex flex-col items-center gap-6 flex-1 min-h-0">
-            <div className="flex flex-col items-center gap-5 w-full max-w-md">
+            <div className="flex flex-col items-center gap-5 w-full md:max-w-md">
               <NowPlaying station={currentStation} isPlaying={isPlaying} />
 
               <PlaybackControls
@@ -268,7 +268,7 @@ export default function Home() {
               />
             </div>
 
-            <div className="flex flex-col items-center gap-5 w-full max-w-md flex-1 min-h-0">
+            <div className="flex flex-col items-center gap-5 w-full md:max-w-md flex-1 min-h-0">
               <div className="flex w-full gap-2">
                 <button
                   onClick={() => setShowFavorites(false)}
