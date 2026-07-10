@@ -42,8 +42,7 @@ export default function Favorites({ onStationSelect, searchQuery = '' }: Favorit
 
   return (
     <div className="w-full flex-1 min-h-0 overflow-y-auto scrollbar-hide">
-      <h3 className="text-lg font-semibold tracking-tight mb-4 text-foreground">Favorites</h3>
-        <div className="space-y-2">
+      <div className="space-y-2">
         {visibleFavorites.map((station) => {
           const isSelected = currentStation?.stationuuid === station.stationuuid;
 
