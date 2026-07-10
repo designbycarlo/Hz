@@ -20,7 +20,9 @@ export const metadata: Metadata = {
   description: "Hz Radio: a web radio app. Hz — the unit of frequency.",
   icons: {
     icon: "/icon.svg",
+    apple: "/apple-touch-icon.png",
   },
+  manifest: "/manifest.webmanifest",
 };
 
 const themeInit = `
