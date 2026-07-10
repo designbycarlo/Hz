@@ -57,6 +57,11 @@ export default function StationList({ stations, onStationSelect }: StationListPr
           );
         })}
       </div>
+      {stations.length === 0 && (
+        <div className="w-full max-w-md p-4 bg-card rounded-2xl border border-border shadow-xs">
+          <p className="text-sm text-muted">No stations found</p>
+        </div>
+      )}
     </div>
   );
 }

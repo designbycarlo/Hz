@@ -37,7 +37,7 @@ export default function PlaybackControls({
       <button
         onClick={isPlaying ? onPause : onPlay}
         disabled={disabled}
-        className="p-4 rounded-full bg-card border-2 border-primary text-primary hover:bg-card-hover shadow-xs transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="p-4 rounded-full bg-primary hover:bg-primary-hover text-white dark:text-zinc-950 shadow-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
         aria-label={isPlaying ? 'Pause' : 'Play'}
       >
         {isPlaying ? <Pause size={24} /> : <Play size={24} />}

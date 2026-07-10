@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, useSyncExternalStore, useRef } from 'react';
+import { useEffect, useState, useCallback, useSyncExternalStore, useRef, useMemo } from 'react';
 import { useRadioStore } from '@/stores/radioStore';
 import { getAudioManager } from '@/lib/audio';
 import { detectLocation } from '@/lib/location';
@@ -9,7 +9,7 @@ import NowPlaying from '@/components/NowPlaying';
 import VolumeControl from '@/components/VolumeControl';
 import PlaybackControls from '@/components/PlaybackControls';
 import Favorites from '@/components/Favorites';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, Search, X } from 'lucide-react';
 
 function ThemeToggle() {
   const isDark = useSyncExternalStore(
@@ -62,6 +62,7 @@ export default function Home() {
   } = useRadioStore();
 
   const [showFavorites, setShowFavorites] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const scanRetryRef = useRef(0);
 
   const initializeApp = useCallback(async () => {
@@ -221,23 +222,58 @@ export default function Home() {
     audioManager.setVolume(newVolume);
   };
 
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+
+  const stationMatchesQuery = (station: {
+    name: string;
+    country: string;
+    tags: string;
+    language?: string;
+    state?: string;
+  }) =>
+    !normalizedQuery ||
+    station.name.toLowerCase().includes(normalizedQuery) ||
+    station.country.toLowerCase().includes(normalizedQuery) ||
+    station.tags.toLowerCase().includes(normalizedQuery) ||
+    station.language?.toLowerCase().includes(normalizedQuery) ||
+    !!station.state?.toLowerCase().includes(normalizedQuery);
+
+  const filteredStations = useMemo(
+    () => availableStations.filter(stationMatchesQuery),
+    [availableStations, normalizedQuery]
+  );
+
   const isPlaying = playbackState === 'playing';
   const isDisabled = isLoading || playbackState === 'loading';
 
   const statusLine = error
-    ? { type: 'error' as const, message: error }
-    : isLoading || playbackState === 'loading'
-      ? { type: 'success' as const, message: 'Loading station…' }
-      : playbackState === 'playing'
-        ? { type: 'success' as const, message: 'Now playing' }
-        : playbackState === 'paused'
-          ? { type: 'success' as const, message: 'Paused' }
-          : null;
+    ? { type: 'error' as const }
+    : null;
 
   return (
     <div className="h-dvh flex flex-col bg-background overflow-hidden">
-      <header className="md:max-w-md mx-auto px-6 py-3 flex justify-end w-full">
-        <div className="flex items-center gap-3">
+      <header className="md:max-w-md mx-auto px-6 py-3 flex items-center justify-between gap-3 w-full">
+        <div className="relative flex-1 max-w-xs">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search stations…"
+            aria-label="Search stations"
+            className="w-full pl-9 pr-8 py-2 rounded-lg bg-card border border-border text-foreground placeholder:text-muted text-sm focus:outline-none focus:border-primary transition-colors duration-300"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              aria-label="Clear search"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md text-muted hover:text-foreground hover:bg-card-hover transition-colors duration-300"
+            >
+              <X size={14} />
+            </button>
+          )}
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
           {userCountry && (
             <span className="text-sm text-muted">
               📍 {userCountry}
@@ -253,20 +289,13 @@ export default function Home() {
           {statusLine && (
             <div
               role={statusLine.type === 'error' ? 'alert' : 'status'}
-              className="w-full max-w-md mx-auto"
+              className="w-full max-w-md mx-auto mb-4"
             >
               <div
                 className={`h-1 w-full rounded-full ${
                   statusLine.type === 'error' ? 'bg-red-500' : 'bg-emerald-500'
                 }`}
               />
-              <p
-                className={`mt-1 text-xs text-center ${
-                  statusLine.type === 'error' ? 'text-red-500' : 'text-emerald-500'
-                }`}
-              >
-                {statusLine.message}
-              </p>
             </div>
           )}
 
@@ -315,10 +344,13 @@ export default function Home() {
               </div>
 
               {showFavorites ? (
-                <Favorites onStationSelect={handleStationSelect} />
+                <Favorites
+                  searchQuery={searchQuery}
+                  onStationSelect={handleStationSelect}
+                />
               ) : (
                 <StationList
-                  stations={availableStations}
+                  stations={filteredStations}
                   onStationSelect={handleStationSelect}
                 />
               )}

@@ -6,10 +6,23 @@ import { Trash2 } from 'lucide-react';
 
 interface FavoritesProps {
   onStationSelect: (station: RadioStation) => void;
+  searchQuery?: string;
 }
 
-export default function Favorites({ onStationSelect }: FavoritesProps) {
+export default function Favorites({ onStationSelect, searchQuery = '' }: FavoritesProps) {
   const { favorites, removeFavorite, currentStation } = useRadioStore();
+
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const visibleFavorites = normalizedQuery
+    ? favorites.filter(
+        (station) =>
+          station.name.toLowerCase().includes(normalizedQuery) ||
+          station.country.toLowerCase().includes(normalizedQuery) ||
+          station.tags.toLowerCase().includes(normalizedQuery) ||
+          station.language?.toLowerCase().includes(normalizedQuery) ||
+          !!station.state?.toLowerCase().includes(normalizedQuery)
+      )
+    : favorites;
 
   if (favorites.length === 0) {
     return (
@@ -19,11 +32,19 @@ export default function Favorites({ onStationSelect }: FavoritesProps) {
     );
   }
 
+  if (visibleFavorites.length === 0) {
+    return (
+      <div className="w-full max-w-md p-4 bg-card rounded-2xl border border-border shadow-xs">
+        <p className="text-sm text-muted">No favorites match “{searchQuery}”.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full flex-1 min-h-0 overflow-y-auto scrollbar-hide">
       <h3 className="text-lg font-semibold tracking-tight mb-4 text-foreground">Favorites</h3>
         <div className="space-y-2">
-        {favorites.map((station) => {
+        {visibleFavorites.map((station) => {
           const isSelected = currentStation?.stationuuid === station.stationuuid;
 
           return (
