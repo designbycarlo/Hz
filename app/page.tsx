@@ -296,7 +296,7 @@ export default function Home() {
                   onClick={() => setShowFavorites(false)}
                   className={`flex-1 px-4 py-2 rounded-lg transition-all duration-300 whitespace-nowrap ${
                     !showFavorites
-                      ? 'bg-primary text-white dark:text-zinc-950 shadow-sm'
+                      ? 'border border-primary text-primary bg-card shadow-xs'
                       : 'bg-card hover:bg-card-hover text-foreground border border-border'
                   }`}
                 >
@@ -306,7 +306,7 @@ export default function Home() {
                   onClick={() => setShowFavorites(true)}
                   className={`flex-1 px-4 py-2 rounded-lg transition-all duration-300 whitespace-nowrap ${
                     showFavorites
-                      ? 'bg-primary text-white dark:text-zinc-950 shadow-sm'
+                      ? 'border border-primary text-primary bg-card shadow-xs'
                       : 'bg-card hover:bg-card-hover text-foreground border border-border'
                   }`}
                 >

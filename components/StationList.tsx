@@ -25,17 +25,17 @@ export default function StationList({ stations, onStationSelect }: StationListPr
               key={station.stationuuid}
               className={`p-4 rounded-xl cursor-pointer border transition-all duration-300 ${
                 isSelected 
-                  ? 'bg-primary text-white border-primary shadow-sm' 
+                  ? 'bg-card border-primary text-primary shadow-xs' 
                   : 'bg-card border-border hover:bg-card-hover hover:border-border-strong hover:shadow-xs'
               }`}
               onClick={() => onStationSelect(station)}
             >
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
-                  <p className={`font-medium truncate ${isSelected ? 'text-white dark:text-zinc-950' : 'text-foreground'}`}>
+                  <p className="font-medium truncate text-foreground">
                     {station.name}
                   </p>
-                  <p className={`text-sm truncate ${isSelected ? 'text-zinc-300 dark:text-zinc-600' : 'text-muted'}`}>
+                  <p className={`text-sm truncate ${isSelected ? 'text-primary/70' : 'text-muted'}`}>
                     {station.country} • {station.tags}
                   </p>
                 </div>
@@ -47,9 +47,7 @@ export default function StationList({ stations, onStationSelect }: StationListPr
                   className={`ml-2 p-1 rounded-full transition-colors ${
                     isFav 
                       ? 'text-red-500 hover:text-red-600' 
-                      : isSelected 
-                        ? 'text-zinc-300 hover:text-zinc-950 dark:text-zinc-700 dark:hover:text-zinc-950' 
-                        : 'text-muted hover:text-foreground'
+                      : 'text-muted hover:text-foreground'
                   }`}
                 >
                   <Heart size={18} fill={isFav ? 'currentColor' : 'none'} />

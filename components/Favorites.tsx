@@ -31,7 +31,7 @@ export default function Favorites({ onStationSelect }: FavoritesProps) {
               key={station.stationuuid}
               className={`p-4 rounded-xl cursor-pointer border transition-all duration-300 ${
                 isSelected 
-                  ? 'bg-primary text-white border-primary shadow-sm' 
+                  ? 'bg-card border-primary text-primary shadow-xs' 
                   : 'bg-card border-border hover:bg-card-hover hover:border-border-strong hover:shadow-xs'
               }`}
             >
@@ -40,20 +40,16 @@ export default function Favorites({ onStationSelect }: FavoritesProps) {
                   className="flex-1 min-w-0"
                   onClick={() => onStationSelect(station)}
                 >
-                  <p className={`font-medium truncate ${isSelected ? 'text-white dark:text-zinc-950' : 'text-foreground'}`}>
+                  <p className="font-medium truncate text-foreground">
                     {station.name}
                   </p>
-                  <p className={`text-sm truncate ${isSelected ? 'text-zinc-300 dark:text-zinc-600' : 'text-muted'}`}>
+                  <p className={`text-sm truncate ${isSelected ? 'text-primary/70' : 'text-muted'}`}>
                     {station.country}
                   </p>
                 </div>
                 <button
                   onClick={() => removeFavorite(station.stationuuid)}
-                  className={`ml-2 p-1 rounded-full transition-colors ${
-                    isSelected 
-                      ? 'text-zinc-300 hover:text-zinc-950 dark:text-zinc-700 dark:hover:text-zinc-950' 
-                      : 'text-muted hover:text-red-500'
-                  }`}
+                  className="ml-2 p-1 rounded-full transition-colors text-muted hover:text-red-500"
                 >
                   <Trash2 size={16} />
                 </button>
