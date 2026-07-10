@@ -5,11 +5,12 @@ import { RadioStation } from '@/types/radio';
 interface NowPlayingProps {
   station: RadioStation | null;
   isPlaying: boolean;
+  error?: string | null;
 }
 
-export default function NowPlaying({ station, isPlaying }: NowPlayingProps) {
+export default function NowPlaying({ station, isPlaying, error }: NowPlayingProps) {
   return (
-    <div className="flex items-center gap-4 p-4 w-full bg-card rounded-2xl border border-border shadow-xs hover:shadow-md transition-all duration-300">
+    <div className="flex items-stretch gap-4 p-4 w-full bg-card rounded-2xl border border-border shadow-xs hover:shadow-md transition-all duration-300">
       <div className="flex-1 min-w-0">
         <h2 className="text-lg font-semibold tracking-tight text-foreground truncate">
           {station?.name || 'No station selected'}
@@ -30,6 +31,15 @@ export default function NowPlaying({ station, isPlaying }: NowPlayingProps) {
           )}
         </div>
       </div>
+      {error ? (
+        <div
+          role="alert"
+          aria-label={error}
+          className="w-1 rounded-full bg-red-500"
+        />
+      ) : isPlaying ? (
+        <div aria-hidden className="w-1 rounded-full bg-emerald-500" />
+      ) : null}
     </div>
   );
 }

@@ -245,11 +245,6 @@ export default function Home() {
 
   const isPlaying = playbackState === 'playing';
   const isDisabled = isLoading || playbackState === 'loading';
-
-  const statusLine = error
-    ? { type: 'error' as const }
-    : null;
-
   return (
     <div className="h-dvh flex flex-col bg-background overflow-hidden">
       <header className="md:max-w-md mx-auto px-6 py-3 flex items-center justify-between gap-3 w-full">
@@ -286,22 +281,9 @@ export default function Home() {
       <main className="flex-1 min-h-0 w-full overflow-hidden">
         <div className="md:max-w-md mx-auto w-full px-6 py-6 h-full flex flex-col">
 
-          {statusLine && (
-            <div
-              role={statusLine.type === 'error' ? 'alert' : 'status'}
-              className="w-full max-w-md mx-auto mb-4"
-            >
-              <div
-                className={`h-1 w-full rounded-full ${
-                  statusLine.type === 'error' ? 'bg-red-500' : 'bg-emerald-500'
-                }`}
-              />
-            </div>
-          )}
-
           <div className="flex flex-col items-center gap-6 flex-1 min-h-0">
             <div className="flex flex-col items-center gap-5 w-full md:max-w-md">
-              <NowPlaying station={currentStation} isPlaying={isPlaying} />
+              <NowPlaying station={currentStation} isPlaying={isPlaying} error={error} />
 
               <PlaybackControls
                 isPlaying={isPlaying}
