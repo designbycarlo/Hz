@@ -1,25 +1,23 @@
 'use client';
 
-import { Play, Pause, Square, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Play, Pause, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface PlaybackControlsProps {
   isPlaying: boolean;
   onPlay: () => void;
   onPause: () => void;
-  onStop: () => void;
   onPrevious?: () => void;
   onNext?: () => void;
   disabled?: boolean;
 }
 
-export default function PlaybackControls({ 
-  isPlaying, 
-  onPlay, 
-  onPause, 
-  onStop,
+export default function PlaybackControls({
+  isPlaying,
+  onPlay,
+  onPause,
   onPrevious,
   onNext,
-  disabled = false 
+  disabled = false
 }: PlaybackControlsProps) {
   return (
     <div className="flex items-center gap-4">
@@ -41,15 +39,6 @@ export default function PlaybackControls({
         aria-label={isPlaying ? 'Pause' : 'Play'}
       >
         {isPlaying ? <Pause size={24} /> : <Play size={24} />}
-      </button>
-      
-      <button
-        onClick={onStop}
-        disabled={disabled}
-        className="p-4 rounded-full bg-card border border-border hover:bg-card-hover text-foreground shadow-xs transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-        aria-label="Stop"
-      >
-        <Square size={24} />
       </button>
       
       {onNext && (

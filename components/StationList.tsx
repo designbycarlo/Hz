@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { RadioStation } from '@/types/radio';
 import { useRadioStore } from '@/stores/radioStore';
 import { Heart } from 'lucide-react';
@@ -11,6 +12,13 @@ interface StationListProps {
 
 export default function StationList({ stations, onStationSelect }: StationListProps) {
   const { currentStation, toggleFavorite, isFavorite } = useRadioStore();
+  const selectedRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (currentStation && selectedRef.current) {
+      selectedRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [currentStation?.stationuuid]);
 
   return (
     <div className="w-full flex-1 min-h-0 overflow-y-auto scrollbar-hide">
@@ -22,6 +30,7 @@ export default function StationList({ stations, onStationSelect }: StationListPr
           return (
             <div
               key={station.stationuuid}
+              ref={isSelected ? selectedRef : undefined}
               className={`p-4 rounded-xl cursor-pointer border transition-all duration-300 ${
                 isSelected 
                   ? 'bg-card border-primary text-primary shadow-xs' 

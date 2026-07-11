@@ -210,12 +210,6 @@ export default function Home() {
     setPlaybackState('paused');
   };
 
-  const handleStop = () => {
-    const audioManager = getAudioManager();
-    audioManager.stop();
-    setPlaybackState('stopped');
-  };
-
   const handleVolumeChange = (newVolume: number) => {
     setVolume(newVolume);
     const audioManager = getAudioManager();
@@ -289,7 +283,6 @@ export default function Home() {
                 isPlaying={isPlaying}
                 onPlay={handlePlay}
                 onPause={handlePause}
-                onStop={handleStop}
                 onPrevious={handlePreviousStation}
                 onNext={handleNextStation}
                 disabled={isDisabled || !currentStation}
