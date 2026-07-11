@@ -1,11 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Hz Radio">
-  <rect width="512" height="512" rx="112" fill="#09090b"/>
-  <g fill="none" stroke="#ffffff" stroke-width="48" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M150 150 V362"/>
-    <path d="M262 150 V362"/>
-    <path d="M150 256 H262"/>
-    <path d="M322 200 H422"/>
-    <path d="M422 200 L322 300"/>
-    <path d="M322 300 H422"/>
-  </g>
-</svg>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="#000" d="M0 0h512v512H0z"/><path d="M115.053 82.526H50v65.053h65.053zM50 169.263h65.053v65.053h65.052v-65.053h65.053v260.211h-65.053V299.368h-65.052v130.106H50zm216.842 65.053H462v65.053l-85.052 65.052H462v65.053H266.842v-65.053l95.053-65.052h-95.053z" fill="#fff"/></svg>
