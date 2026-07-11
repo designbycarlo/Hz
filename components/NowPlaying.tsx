@@ -38,7 +38,7 @@ export default function NowPlaying({ station, isPlaying, error }: NowPlayingProp
           className="w-1 rounded-full bg-red-500"
         />
       ) : isPlaying ? (
-        <div aria-hidden className="w-1 rounded-full bg-emerald-500" />
+        <div aria-hidden className="w-1 rounded-full bg-[#2CFF05]" />
       ) : null}
     </div>
   );
