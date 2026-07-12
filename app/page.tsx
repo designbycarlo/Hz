@@ -64,6 +64,7 @@ export default function Home() {
   const [showFavorites, setShowFavorites] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const scanRetryRef = useRef(0);
+  const handleStationSelectRef = useRef<((station: RadioStation | null) => void) | null>(null);
 
   const initializeApp = useCallback(async () => {
     try {
@@ -88,11 +89,13 @@ export default function Home() {
 
       if (stations.length > 0) {
         setCurrentStation(stations[0]);
+        setTimeout(() => handleStationSelectRef.current?.(stations[0]), 500);
+      } else {
+        setIsLoading(false);
       }
     } catch (err) {
       console.error('Initialization error:', err);
       setError('Failed to initialize radio. Please try again.');
-    } finally {
       setIsLoading(false);
     }
   }, [setIsLoading, clearError, setUserCountry, setAvailableStations, setCurrentStation, setError]);
@@ -143,6 +146,10 @@ export default function Home() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    handleStationSelectRef.current = handleStationSelect;
+  });
 
   const handlePreviousStation = () => {
     if (availableStations.length === 0) return;
