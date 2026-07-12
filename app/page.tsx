@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useSyncExternalStore, useRef, useMemo
 import { useRadioStore } from '@/stores/radioStore';
 import { getAudioManager } from '@/lib/audio';
 import { detectLocation } from '@/lib/location';
+import { RadioStation } from '@/types/radio';
 import StationList from '@/components/StationList';
 import NowPlaying from '@/components/NowPlaying';
 import VolumeControl from '@/components/VolumeControl';
