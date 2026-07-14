@@ -114,6 +114,7 @@ export default function Home() {
       setPlaybackState('loading');
 
       const audioManager = getAudioManager();
+      audioManager.setVolume(volume);
       await audioManager.play(station, volume);
       setPlaybackState('playing');
       scanRetryRef.current = 0;
@@ -176,6 +177,7 @@ export default function Home() {
       setPlaybackState('loading');
 
       const audioManager = getAudioManager();
+      audioManager.setVolume(volume);
       await audioManager.play(currentStation, volume);
       setPlaybackState('playing');
       scanRetryRef.current = 0;
