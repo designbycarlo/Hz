@@ -10,6 +10,7 @@ import VolumeControl from '@/components/VolumeControl';
 import PlaybackControls from '@/components/PlaybackControls';
 import Favorites from '@/components/Favorites';
 import { Sun, Moon, Search, X } from 'lucide-react';
+import CountrySelector from '@/components/CountrySelector';
 
 function ThemeToggle() {
   const isDark = useSyncExternalStore(
@@ -216,6 +217,36 @@ export default function Home() {
     audioManager.setVolume(newVolume);
   };
 
+  const handleCountryChange = useCallback(async (code: string) => {
+    setUserCountry(code);
+    setIsLoading(true);
+    clearError();
+
+    try {
+      let response = await fetch(`/api/stations?country=${code}&limit=50`);
+
+      if (!response.ok) {
+        console.warn('Country-specific fetch failed, falling back to top stations');
+        response = await fetch(`/api/stations?limit=50`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch stations');
+        }
+      }
+
+      const stations = await response.json();
+      setAvailableStations(stations);
+
+      if (stations.length > 0) {
+        setCurrentStation(stations[0]);
+      }
+    } catch (err) {
+      console.error('Country change error:', err);
+      setError('Failed to load stations for selected country.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [setUserCountry, setIsLoading, clearError, setAvailableStations, setCurrentStation, setError]);
+
   const normalizedQuery = searchQuery.trim().toLowerCase();
 
   const stationMatchesQuery = (station: {
@@ -263,11 +294,10 @@ export default function Home() {
           )}
         </div>
         <div className="flex items-center gap-3 shrink-0">
-          {userCountry && (
-            <span className="text-sm text-muted">
-              📍 {userCountry}
-            </span>
-          )}
+          <CountrySelector
+            selectedCountry={userCountry}
+            onCountryChange={handleCountryChange}
+          />
           <ThemeToggle />
         </div>
       </header>
