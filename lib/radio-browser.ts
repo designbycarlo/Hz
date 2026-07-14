@@ -3,6 +3,11 @@ import { RadioStation, RawStation } from '@/types/radio';
 const API_BASE_URL = 'https://de1.api.radio-browser.info/json';
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
+function toHttps(url: string | undefined): string {
+  if (!url) return '';
+  return url.replace(/^http:\/\//i, 'https://');
+}
+
 interface CacheEntry {
   data: RadioStation[];
   timestamp: number;
@@ -16,6 +21,22 @@ function getCacheKey(endpoint: string, params: Record<string, string>): string {
 
 function isCacheValid(entry: CacheEntry): boolean {
   return Date.now() - entry.timestamp < CACHE_DURATION;
+}
+
+function mapStation(station: RawStation): RadioStation {
+  return {
+    stationuuid: station.stationuuid,
+    name: station.name,
+    url: toHttps(station.url_resolved || station.url),
+    country: station.country || '',
+    countrycode: station.countrycode || '',
+    favicon: toHttps(station.favicon),
+    tags: station.tags || '',
+    bitrate: station.bitrate || 128,
+    homepage: toHttps(station.homepage),
+    language: station.language,
+    state: station.state,
+  };
 }
 
 export async function fetchStationsByCountry(
@@ -43,19 +64,7 @@ export async function fetchStationsByCountry(
 
     const data = await response.json();
     
-    const stations: RadioStation[] = data.map((station: RawStation) => ({
-      stationuuid: station.stationuuid,
-      name: station.name,
-      url: station.url_resolved || station.url,
-      country: station.country,
-      countrycode: station.countrycode,
-      favicon: station.favicon || '',
-      tags: station.tags || '',
-      bitrate: station.bitrate || 128,
-      homepage: station.homepage,
-      language: station.language,
-      state: station.state,
-    }));
+    const stations: RadioStation[] = data.map(mapStation);
 
     cache.set(cacheKey, { data: stations, timestamp: Date.now() });
     return stations;
@@ -99,19 +108,7 @@ export async function searchStations(
 
     const data = await response.json();
     
-    const stations: RadioStation[] = data.map((station: RawStation) => ({
-      stationuuid: station.stationuuid,
-      name: station.name,
-      url: station.url_resolved || station.url,
-      country: station.country,
-      countrycode: station.countrycode,
-      favicon: station.favicon || '',
-      tags: station.tags || '',
-      bitrate: station.bitrate || 128,
-      homepage: station.homepage,
-      language: station.language,
-      state: station.state,
-    }));
+    const stations: RadioStation[] = data.map(mapStation);
 
     cache.set(cacheKey, { data: stations, timestamp: Date.now() });
     return stations;
@@ -143,19 +140,7 @@ export async function getTopStations(limit: number = 50): Promise<RadioStation[]
 
     const data = await response.json();
     
-    const stations: RadioStation[] = data.map((station: RawStation) => ({
-      stationuuid: station.stationuuid,
-      name: station.name,
-      url: station.url_resolved || station.url,
-      country: station.country,
-      countrycode: station.countrycode,
-      favicon: station.favicon || '',
-      tags: station.tags || '',
-      bitrate: station.bitrate || 128,
-      homepage: station.homepage,
-      language: station.language,
-      state: station.state,
-    }));
+    const stations: RadioStation[] = data.map(mapStation);
 
     cache.set(cacheKey, { data: stations, timestamp: Date.now() });
     return stations;
