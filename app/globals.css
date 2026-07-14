@@ -57,6 +57,7 @@
 @layer base {
   html {
     color-scheme: light;
+    touch-action: manipulation;
   }
   html.dark {
     color-scheme: dark;
@@ -68,6 +69,7 @@
     margin: 0;
     padding: 0;
     -webkit-font-smoothing: antialiased;
+    touch-action: manipulation;
   }
   ::selection {
     background: var(--border-strong);
