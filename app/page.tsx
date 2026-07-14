@@ -49,6 +49,7 @@ export default function Home() {
     playbackState,
     volume,
     availableStations,
+    favorites,
     userCountry,
     isLoading,
     error,
@@ -109,6 +110,7 @@ export default function Home() {
       setIsLoading(true);
       clearError();
       setCurrentStation(station);
+      setUserCountry(station.countrycode);
       setPlaybackState('loading');
 
       const audioManager = getAudioManager();
@@ -146,21 +148,23 @@ export default function Home() {
   };
 
   const handlePreviousStation = () => {
-    if (availableStations.length === 0) return;
+    const list = showFavorites ? favorites : availableStations;
+    if (list.length === 0) return;
     const currentIndex = currentStation 
-      ? availableStations.findIndex(s => s.stationuuid === currentStation.stationuuid)
+      ? list.findIndex(s => s.stationuuid === currentStation.stationuuid)
       : -1;
-    const newIndex = currentIndex <= 0 ? availableStations.length - 1 : currentIndex - 1;
-    handleStationSelect(availableStations[newIndex]);
+    const newIndex = currentIndex <= 0 ? list.length - 1 : currentIndex - 1;
+    handleStationSelect(list[newIndex]);
   };
 
   const handleNextStation = () => {
-    if (availableStations.length === 0) return;
+    const list = showFavorites ? favorites : availableStations;
+    if (list.length === 0) return;
     const currentIndex = currentStation 
-      ? availableStations.findIndex(s => s.stationuuid === currentStation.stationuuid)
+      ? list.findIndex(s => s.stationuuid === currentStation.stationuuid)
       : -1;
-    const newIndex = currentIndex >= availableStations.length - 1 ? 0 : currentIndex + 1;
-    handleStationSelect(availableStations[newIndex]);
+    const newIndex = currentIndex >= list.length - 1 ? 0 : currentIndex + 1;
+    handleStationSelect(list[newIndex]);
   };
 
   const handlePlay = async () => {

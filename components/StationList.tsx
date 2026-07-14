@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { RadioStation } from '@/types/radio';
 import { useRadioStore } from '@/stores/radioStore';
 import { Heart } from 'lucide-react';
@@ -14,9 +14,10 @@ export default function StationList({ stations, onStationSelect }: StationListPr
   const { currentStation, toggleFavorite, isFavorite } = useRadioStore();
   const selectedRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (currentStation && selectedRef.current) {
+  useLayoutEffect(() => {
+    if (selectedRef.current) {
       selectedRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      selectedRef.current.focus({ preventScroll: true });
     }
   }, [currentStation?.stationuuid]);
 
@@ -31,9 +32,10 @@ export default function StationList({ stations, onStationSelect }: StationListPr
             <div
               key={station.stationuuid}
               ref={isSelected ? selectedRef : undefined}
-              className={`p-4 rounded-xl cursor-pointer border transition-all duration-300 ${
-                isSelected 
-                  ? 'bg-card border-primary text-primary shadow-xs' 
+              tabIndex={isSelected ? -1 : undefined}
+              className={`p-4 rounded-xl cursor-pointer border transition-all duration-300 outline-none ${
+                isSelected
+                  ? 'bg-card border-primary text-primary shadow-xs'
                   : 'bg-card border-border hover:bg-card-hover hover:border-border-strong hover:shadow-xs'
               }`}
               onClick={() => onStationSelect(station)}

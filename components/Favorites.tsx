@@ -1,5 +1,6 @@
 'use client';
 
+import { useLayoutEffect, useRef } from 'react';
 import { RadioStation } from '@/types/radio';
 import { useRadioStore } from '@/stores/radioStore';
 import { Trash2 } from 'lucide-react';
@@ -11,6 +12,7 @@ interface FavoritesProps {
 
 export default function Favorites({ onStationSelect, searchQuery = '' }: FavoritesProps) {
   const { favorites, removeFavorite, currentStation } = useRadioStore();
+  const selectedRef = useRef<HTMLDivElement>(null);
 
   const normalizedQuery = searchQuery.trim().toLowerCase();
   const visibleFavorites = normalizedQuery
@@ -23,6 +25,13 @@ export default function Favorites({ onStationSelect, searchQuery = '' }: Favorit
           !!station.state?.toLowerCase().includes(normalizedQuery)
       )
     : favorites;
+
+  useLayoutEffect(() => {
+    if (selectedRef.current) {
+      selectedRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      selectedRef.current.focus({ preventScroll: true });
+    }
+  }, [currentStation?.stationuuid]);
 
   if (favorites.length === 0) {
     return (
@@ -49,9 +58,11 @@ export default function Favorites({ onStationSelect, searchQuery = '' }: Favorit
           return (
             <div
               key={station.stationuuid}
-              className={`p-4 rounded-xl cursor-pointer border transition-all duration-300 ${
-                isSelected 
-                  ? 'bg-card border-primary text-primary shadow-xs' 
+              ref={isSelected ? selectedRef : undefined}
+              tabIndex={isSelected ? -1 : undefined}
+              className={`p-4 rounded-xl cursor-pointer border transition-all duration-300 outline-none ${
+                isSelected
+                  ? 'bg-card border-primary text-primary shadow-xs'
                   : 'bg-card border-border hover:bg-card-hover hover:border-border-strong hover:shadow-xs'
               }`}
             >
