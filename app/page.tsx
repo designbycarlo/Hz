@@ -149,6 +149,7 @@ export default function Home() {
   };
 
   const handlePreviousStation = () => {
+    setSearchQuery('');
     const list = showFavorites ? favorites : availableStations;
     if (list.length === 0) return;
     const currentIndex = currentStation 
@@ -159,6 +160,7 @@ export default function Home() {
   };
 
   const handleNextStation = () => {
+    setSearchQuery('');
     const list = showFavorites ? favorites : availableStations;
     if (list.length === 0) return;
     const currentIndex = currentStation 
@@ -224,6 +226,7 @@ export default function Home() {
   };
 
   const handleCountryChange = useCallback(async (code: string) => {
+    setShowFavorites(false);
     setUserCountry(code);
     setIsLoading(true);
     clearError();
