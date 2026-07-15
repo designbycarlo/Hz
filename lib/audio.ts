@@ -8,6 +8,10 @@ class AudioManager {
   private retryCount = 0;
   private maxRetries = 3;
   private retryDelay = 2000;
+  private mediaSessionActions: {
+    onPrevious?: () => void;
+    onNext?: () => void;
+  } = {};
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -64,6 +68,10 @@ class AudioManager {
 
       await this.audioElement.play();
       this.retryCount = 0;
+
+      if (typeof navigator !== 'undefined' && 'mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = 'playing';
+      }
     } catch (error) {
       console.error('Playback error:', error);
       
@@ -82,6 +90,10 @@ class AudioManager {
   pause(): void {
     if (this.audioElement) {
       this.audioElement.pause();
+    }
+
+    if (typeof navigator !== 'undefined' && 'mediaSession' in navigator) {
+      navigator.mediaSession.playbackState = 'paused';
     }
   }
 
@@ -140,6 +152,29 @@ class AudioManager {
   onWaiting(callback: () => void): void {
     if (this.audioElement) {
       this.audioElement.addEventListener('waiting', callback);
+    }
+  }
+
+  setMediaSessionActions(actions: {
+    onPrevious?: () => void;
+    onNext?: () => void;
+  }): void {
+    this.mediaSessionActions = actions;
+
+    if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) {
+      return;
+    }
+
+    const ms = navigator.mediaSession;
+    try {
+      ms.setActionHandler('previoustrack', () =>
+        this.mediaSessionActions.onPrevious?.()
+      );
+      ms.setActionHandler('nexttrack', () =>
+        this.mediaSessionActions.onNext?.()
+      );
+    } catch (error) {
+      console.error('Failed to set MediaSession actions:', error);
     }
   }
 

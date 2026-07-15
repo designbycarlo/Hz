@@ -170,6 +170,36 @@ export default function Home() {
     handleStationSelect(list[newIndex]);
   };
 
+  useEffect(() => {
+    const audioManager = getAudioManager();
+    audioManager.setMediaSessionActions({
+      onPrevious: handlePreviousStation,
+      onNext: handleNextStation,
+    });
+  }, [handlePreviousStation, handleNextStation]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      ) {
+        return;
+      }
+
+      if (e.key === 'ArrowLeft' || e.key === 'MediaTrackPrevious') {
+        e.preventDefault();
+        handlePreviousStation();
+      } else if (e.key === 'ArrowRight' || e.key === 'MediaTrackNext') {
+        e.preventDefault();
+        handleNextStation();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handlePreviousStation, handleNextStation]);
+
   const handlePlay = async () => {
     if (!currentStation) return;
 
