@@ -29,6 +29,30 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
 };
 
+const zoomLock = `
+(function() {
+  var d = document;
+  // Prevent gesture zoom (iOS Safari)
+  d.addEventListener('gesturestart', function(e) { e.preventDefault(); });
+  d.addEventListener('gesturechange', function(e) { e.preventDefault(); });
+  d.addEventListener('gestureend', function(e) { e.preventDefault(); });
+  // Prevent multi-touch pinch zoom
+  d.addEventListener('touchmove', function(e) {
+    if (e.touches && e.touches.length > 1) e.preventDefault();
+  }, { passive: false });
+  // Prevent Ctrl/Meta + scroll zoom (desktop)
+  d.addEventListener('wheel', function(e) {
+    if (e.ctrlKey || e.metaKey) { e.preventDefault(); }
+  }, { passive: false });
+  // Prevent Ctrl/Meta + +/-/0 zoom (keyboard)
+  d.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '-' || e.key === '0' || e.key === '=')) {
+      e.preventDefault();
+    }
+  });
+})();
+`;
+
 const themeInit = `
 (function() {
   try {
@@ -52,6 +76,7 @@ export default function RootLayout({
     >
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <script dangerouslySetInnerHTML={{ __html: zoomLock }} />
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
       <body className="min-h-full flex flex-col">{children}</body>
