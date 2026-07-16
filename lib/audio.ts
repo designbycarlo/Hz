@@ -27,6 +27,15 @@ class AudioManager {
     this.audioElement.crossOrigin = 'anonymous';
   }
 
+  private isFatalSourceError(error: unknown): boolean {
+    return (
+      error instanceof Error &&
+      (error.name === 'NotSupportedError' ||
+        error.message.includes('no supported source') ||
+        error.message.includes('Failed to load'))
+    );
+  }
+
   private async initializeAudioContext(): Promise<void> {
     if (this.audioContext) return;
 
@@ -75,6 +84,10 @@ class AudioManager {
     } catch (error) {
       console.error('Playback error:', error);
       
+      if (this.isFatalSourceError(error)) {
+        throw error;
+      }
+
       if (this.retryCount < this.maxRetries) {
         this.retryCount++;
         console.log(`Retrying playback (${this.retryCount}/${this.maxRetries})...`);
@@ -143,10 +156,11 @@ class AudioManager {
     }
   }
 
-  onError(callback: (error: ErrorEvent) => void): void {
-    if (this.audioElement) {
-      this.audioElement.addEventListener('error', callback);
-    }
+  onError(callback: (error: ErrorEvent) => void): () => void {
+    if (!this.audioElement) return () => {};
+
+    this.audioElement.addEventListener('error', callback);
+    return () => this.audioElement?.removeEventListener('error', callback);
   }
 
   onWaiting(callback: () => void): void {

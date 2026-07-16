@@ -103,9 +103,39 @@ export default function Home() {
     initializeApp();
   }, [initializeApp]);
 
+  const handleStationSelectRef = useRef<(station: typeof currentStation) => void>(() => {});
+
+  const scanToNextStation = useCallback((failedStation: typeof currentStation) => {
+    scanRetryRef.current += 1;
+
+    if (scanRetryRef.current > availableStations.length) {
+      scanRetryRef.current = 0;
+      setError('Failed to play station.');
+      setPlaybackState('error');
+      return;
+    }
+
+    setError('Failed to play station. Scanning...');
+
+    const currentIndex = failedStation
+      ? availableStations.findIndex(s => s.stationuuid === failedStation.stationuuid)
+      : -1;
+    const nextIndex = currentIndex >= availableStations.length - 1 ? 0 : currentIndex + 1;
+    const nextStation = availableStations[nextIndex];
+
+    if (nextStation) {
+      setTimeout(() => handleStationSelectRef.current(nextStation), 1000);
+    } else {
+      scanRetryRef.current = 0;
+      setError('Failed to play station.');
+      setPlaybackState('error');
+    }
+  }, [availableStations, setError, setPlaybackState]);
+
   const handleStationSelect = async (station: typeof currentStation) => {
     if (!station) return;
 
+    setSearchQuery('');
     try {
       setIsLoading(true);
       clearError();
@@ -121,32 +151,15 @@ export default function Home() {
     } catch (err) {
       console.error('Playback error:', err);
       setPlaybackState('error');
-      scanRetryRef.current += 1;
-
-      if (scanRetryRef.current > availableStations.length) {
-        scanRetryRef.current = 0;
-        setError('Failed to play station.');
-        return;
-      }
-
-      setError('Failed to play station. Scanning...');
-
-      const currentIndex = station
-        ? availableStations.findIndex(s => s.stationuuid === station.stationuuid)
-        : -1;
-      const nextIndex = currentIndex >= availableStations.length - 1 ? 0 : currentIndex + 1;
-      const nextStation = availableStations[nextIndex];
-
-      if (nextStation) {
-        setTimeout(() => handleStationSelect(nextStation), 1000);
-      } else {
-        scanRetryRef.current = 0;
-        setError('Failed to play station.');
-      }
+      scanToNextStation(station);
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    handleStationSelectRef.current = handleStationSelect;
+  }, [handleStationSelect]);
 
   const handlePreviousStation = () => {
     setSearchQuery('');
@@ -176,7 +189,16 @@ export default function Home() {
       onPrevious: handlePreviousStation,
       onNext: handleNextStation,
     });
-  }, [handlePreviousStation, handleNextStation]);
+
+    const handleAudioError = () => {
+      if (playbackState === 'playing' || playbackState === 'loading') {
+        scanToNextStation(currentStation);
+      }
+    };
+    const offError = audioManager.onError(handleAudioError);
+
+    return () => offError();
+  }, [handlePreviousStation, handleNextStation, scanToNextStation, currentStation, playbackState]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -203,6 +225,7 @@ export default function Home() {
   const handlePlay = async () => {
     if (!currentStation) return;
 
+    setSearchQuery('');
     try {
       setIsLoading(true);
       clearError();
@@ -216,28 +239,7 @@ export default function Home() {
     } catch (err) {
       console.error('Play error:', err);
       setPlaybackState('error');
-      scanRetryRef.current += 1;
-
-      if (scanRetryRef.current > availableStations.length) {
-        scanRetryRef.current = 0;
-        setError('Failed to play station.');
-        return;
-      }
-
-      setError('Failed to play station. Scanning...');
-
-      const currentIndex = currentStation
-        ? availableStations.findIndex(s => s.stationuuid === currentStation.stationuuid)
-        : -1;
-      const nextIndex = currentIndex >= availableStations.length - 1 ? 0 : currentIndex + 1;
-      const nextStation = availableStations[nextIndex];
-
-      if (nextStation) {
-        setTimeout(() => handleStationSelect(nextStation), 1000);
-      } else {
-        scanRetryRef.current = 0;
-        setError('Failed to play station.');
-      }
+      scanToNextStation(currentStation);
     } finally {
       setIsLoading(false);
     }
