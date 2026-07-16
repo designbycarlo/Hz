@@ -191,9 +191,7 @@ export default function Home() {
     });
 
     const handleAudioError = () => {
-      if (playbackState === 'playing' || playbackState === 'loading') {
-        scanToNextStation(currentStation);
-      }
+      scanToNextStation(currentStation);
     };
     const offError = audioManager.onError(handleAudioError);
 
@@ -322,7 +320,7 @@ export default function Home() {
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search stations…"
             aria-label="Search stations"
-            className="w-full pl-9 pr-8 py-2 rounded-lg bg-card border border-border text-foreground placeholder:text-muted text-sm focus:outline-none focus:border-primary transition-colors duration-300"
+            className="w-full pl-9 pr-8 py-2 rounded-lg bg-card border border-border text-foreground placeholder:text-muted text-base focus:outline-none focus:border-primary transition-colors duration-300"
           />
           {searchQuery && (
             <button
