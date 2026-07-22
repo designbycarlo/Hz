@@ -105,7 +105,7 @@ export default function CountrySelector({ selectedCountry, onCountryChange }: Co
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search countries…"
                 aria-label="Search countries"
-                className="w-full pl-8 pr-8 py-1.5 rounded-md bg-background border border-border text-foreground placeholder:text-muted text-sm focus:outline-none focus:border-primary transition-colors duration-300"
+                className="w-full pl-8 pr-8 py-1.5 rounded-md bg-background border border-border text-foreground placeholder:text-muted text-base focus:outline-none focus:border-primary transition-colors duration-300"
               />
               {searchQuery && (
                 <button
