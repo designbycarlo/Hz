@@ -66,6 +66,8 @@ export default function Home() {
   const [showFavorites, setShowFavorites] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const scanRetryRef = useRef(0);
+  const loadTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const cancelledRef = useRef(false);
 
   const initializeApp = useCallback(async () => {
     try {
@@ -136,23 +138,47 @@ export default function Home() {
     if (!station) return;
 
     setSearchQuery('');
+    cancelledRef.current = false;
+
+    if (loadTimeoutRef.current) {
+      clearTimeout(loadTimeoutRef.current);
+      loadTimeoutRef.current = null;
+    }
+
     try {
       setIsLoading(true);
       clearError();
+      scanRetryRef.current = 0;
       setCurrentStation(station);
       setUserCountry(station.countrycode);
       setPlaybackState('loading');
 
       const audioManager = getAudioManager();
       audioManager.setVolume(volume);
+
+      loadTimeoutRef.current = setTimeout(() => {
+        cancelledRef.current = true;
+        loadTimeoutRef.current = null;
+        setPlaybackState('error');
+        setError('Station loading timeout. Scanning...');
+        const audioManager = getAudioManager();
+        audioManager.stop();
+        scanToNextStation(station);
+      }, 10000);
+
       await audioManager.play(station, volume);
       setPlaybackState('playing');
       scanRetryRef.current = 0;
     } catch (err) {
+      if (cancelledRef.current) return;
       console.error('Playback error:', err);
       setPlaybackState('error');
       scanToNextStation(station);
     } finally {
+      if (loadTimeoutRef.current) {
+        clearTimeout(loadTimeoutRef.current);
+        loadTimeoutRef.current = null;
+      }
       setIsLoading(false);
     }
   };
@@ -160,6 +186,14 @@ export default function Home() {
   useEffect(() => {
     handleStationSelectRef.current = handleStationSelect;
   }, [handleStationSelect]);
+
+  useEffect(() => {
+    return () => {
+      if (loadTimeoutRef.current) {
+        clearTimeout(loadTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handlePreviousStation = () => {
     setSearchQuery('');

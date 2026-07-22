@@ -4,6 +4,7 @@ class AudioManager {
   private audioElement: HTMLAudioElement | null = null;
   private audioContext: AudioContext | null = null;
   private gainNode: GainNode | null = null;
+  private dynamicsCompressor: DynamicsCompressorNode | null = null;
   private sourceNode: MediaElementAudioSourceNode | null = null;
   private retryCount = 0;
   private maxRetries = 3;
@@ -45,10 +46,17 @@ class AudioManager {
         (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       this.audioContext = new AudioContextCtor();
       this.gainNode = this.audioContext.createGain();
-      
+      this.dynamicsCompressor = this.audioContext.createDynamicsCompressor();
+      this.dynamicsCompressor.threshold.setValueAtTime(-24, this.audioContext.currentTime);
+      this.dynamicsCompressor.knee.setValueAtTime(30, this.audioContext.currentTime);
+      this.dynamicsCompressor.ratio.setValueAtTime(12, this.audioContext.currentTime);
+      this.dynamicsCompressor.attack.setValueAtTime(0.003, this.audioContext.currentTime);
+      this.dynamicsCompressor.release.setValueAtTime(0.25, this.audioContext.currentTime);
+
       if (this.audioElement) {
         this.sourceNode = this.audioContext.createMediaElementSource(this.audioElement);
-        this.sourceNode.connect(this.gainNode);
+        this.sourceNode.connect(this.dynamicsCompressor);
+        this.dynamicsCompressor.connect(this.gainNode);
         this.gainNode.connect(this.audioContext.destination);
       }
     } catch (error) {
@@ -69,8 +77,8 @@ class AudioManager {
       }
 
       this.audioElement.src = station.url;
-      this.audioElement.volume = volume;
-      
+      this.audioElement.volume = 1.0;
+
       if (this.gainNode) {
         this.gainNode.gain.value = volume;
       }
