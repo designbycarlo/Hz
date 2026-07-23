@@ -90,6 +90,13 @@ class AudioManager {
         navigator.mediaSession.playbackState = 'playing';
       }
     } catch (error) {
+      if (
+        error instanceof DOMException &&
+        error.name === 'AbortError'
+      ) {
+        return;
+      }
+
       console.error('Playback error:', error);
       
       if (this.isFatalSourceError(error)) {
