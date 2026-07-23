@@ -53,6 +53,7 @@ export default function Home() {
     userCountry,
     isLoading,
     error,
+    autoplay,
     setCurrentStation,
     setPlaybackState,
     setVolume,
@@ -61,6 +62,7 @@ export default function Home() {
     setIsLoading,
     setError,
     clearError,
+    setAutoplay,
   } = useRadioStore();
 
   const [showFavorites, setShowFavorites] = useState(false);
@@ -92,6 +94,13 @@ export default function Home() {
 
       if (stations.length > 0) {
         setCurrentStation(stations[0]);
+
+        if (autoplay) {
+          const audioManager = getAudioManager();
+          audioManager.setVolume(volume);
+          await audioManager.play(stations[0], volume);
+          setPlaybackState('playing');
+        }
       }
     } catch (err) {
       console.error('Initialization error:', err);
@@ -99,7 +108,7 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
-  }, [setIsLoading, clearError, setUserCountry, setAvailableStations, setCurrentStation, setError]);
+  }, [setIsLoading, clearError, setUserCountry, setAvailableStations, setCurrentStation, setError, autoplay, volume, setPlaybackState]);
 
   useEffect(() => {
     initializeApp();
@@ -389,6 +398,8 @@ export default function Home() {
                 onPrevious={handlePreviousStation}
                 onNext={handleNextStation}
                 disabled={isDisabled || !currentStation}
+                autoplay={autoplay}
+                onAutoplayToggle={setAutoplay}
               />
 
               <VolumeControl

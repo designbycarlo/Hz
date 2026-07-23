@@ -12,6 +12,7 @@ interface RadioStore {
   userCountry: string | null;
   isLoading: boolean;
   error: string | null;
+  autoplay: boolean;
   
   // Actions
   setCurrentStation: (station: RadioStation | null) => void;
@@ -26,6 +27,7 @@ interface RadioStore {
   toggleFavorite: (station: RadioStation) => void;
   isFavorite: (stationUuid: string) => boolean;
   clearError: () => void;
+  setAutoplay: (autoplay: boolean) => void;
 }
 
 export const useRadioStore = create<RadioStore>()(
@@ -40,6 +42,7 @@ export const useRadioStore = create<RadioStore>()(
       userCountry: null,
       isLoading: false,
       error: null,
+      autoplay: true,
 
       // Actions
       setCurrentStation: (station) => set({ currentStation: station }),
@@ -81,6 +84,8 @@ export const useRadioStore = create<RadioStore>()(
       },
       
       clearError: () => set({ error: null }),
+
+      setAutoplay: (autoplay) => set({ autoplay }),
     }),
     {
       name: 'radio-storage',
@@ -88,6 +93,7 @@ export const useRadioStore = create<RadioStore>()(
         favorites: state.favorites,
         volume: state.volume,
         userCountry: state.userCountry,
+        autoplay: state.autoplay,
       }),
     }
   )
