@@ -68,6 +68,7 @@ export default function Home() {
   const scanRetryRef = useRef(0);
   const loadTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const cancelledRef = useRef(false);
+  const scanningRef = useRef(false);
 
   const initializeApp = useCallback(async () => {
     try {
@@ -108,10 +109,14 @@ export default function Home() {
   const handleStationSelectRef = useRef<(station: typeof currentStation) => void>(() => {});
 
   const scanToNextStation = useCallback((failedStation: typeof currentStation) => {
+    if (scanningRef.current) return;
+    scanningRef.current = true;
+
     scanRetryRef.current += 1;
 
     if (scanRetryRef.current > availableStations.length) {
       scanRetryRef.current = 0;
+      scanningRef.current = false;
       setError('Failed to play station.');
       setPlaybackState('error');
       return;
@@ -126,9 +131,13 @@ export default function Home() {
     const nextStation = availableStations[nextIndex];
 
     if (nextStation) {
-      setTimeout(() => handleStationSelectRef.current(nextStation), 1000);
+      setTimeout(() => {
+        scanningRef.current = false;
+        handleStationSelectRef.current(nextStation);
+      }, 1000);
     } else {
       scanRetryRef.current = 0;
+      scanningRef.current = false;
       setError('Failed to play station.');
       setPlaybackState('error');
     }
@@ -169,15 +178,20 @@ export default function Home() {
       await audioManager.play(station, volume);
       setPlaybackState('playing');
       scanRetryRef.current = 0;
+      scanningRef.current = false;
     } catch (err) {
       if (cancelledRef.current) return;
       console.error('Playback error:', err);
       setPlaybackState('error');
+      scanningRef.current = false;
       scanToNextStation(station);
     } finally {
       if (loadTimeoutRef.current) {
         clearTimeout(loadTimeoutRef.current);
         loadTimeoutRef.current = null;
+      }
+      if (cancelledRef.current) {
+        cancelledRef.current = false;
       }
       setIsLoading(false);
     }
@@ -279,8 +293,16 @@ export default function Home() {
 
   const handlePause = () => {
     const audioManager = getAudioManager();
-    audioManager.pause();
+    audioManager.stop();
     setPlaybackState('paused');
+    scanRetryRef.current = 0;
+    scanningRef.current = false;
+    clearError();
+
+    if (loadTimeoutRef.current) {
+      clearTimeout(loadTimeoutRef.current);
+      loadTimeoutRef.current = null;
+    }
   };
 
   const handleVolumeChange = (newVolume: number) => {
