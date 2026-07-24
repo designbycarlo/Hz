@@ -25,7 +25,7 @@ export default function PlaybackControls({
 }: PlaybackControlsProps) {
   return (
     <div className="grid grid-cols-3 items-center w-full">
-      <div className="flex flex-col items-center gap-1 justify-self-start">
+      <div className="flex flex-col items-center gap-1 justify-self-start" style={{ marginLeft: '5px' }}>
         <button
           role="switch"
           aria-checked={autoplay}
