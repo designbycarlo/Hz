@@ -42,7 +42,7 @@ export const useRadioStore = create<RadioStore>()(
       userCountry: null,
       isLoading: false,
       error: null,
-      autoplay: true,
+      autoplay: false,
 
       // Actions
       setCurrentStation: (station) => set({ currentStation: station }),
